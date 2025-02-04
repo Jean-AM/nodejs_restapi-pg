@@ -1,4 +1,5 @@
 import { pool } from '../db.js'
+import bcrypt from "bcryptjs";
 
 export const getUsers = async (req, res) => {
     const response = await pool.query("SELECT * FROM users ORDER BY id ASC");
@@ -18,16 +19,30 @@ export const getUserById = async (req, res) => {
 
 export const createUser = async (req, res) => {
     try {
-        const { name, email } = req.body;
+        const { username, email, password } = req.body;
+
+        if (!username || !email || !password) {
+            return res.status(400).json({ error: "Todos los campos son obligatorios" });
+        }
+
+        const userExists = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
+        if (userExists.rows.length > 0) {
+            return res.status(400).json({ error: "El correo ya está registrado" });
+        }
+
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+
         const { rows } = await pool.query(
-          "INSERT INTO users (name, email) VALUES ($1, $2) RETURNING *",
-            [name, email]
+          "INSERT INTO users (username, email, password) VALUES ($1, $2, $3) RETURNING *",
+            [username, email, hashedPassword]
         );
     
-        res.status(201).json(rows[0]);
+        res.status(201).json({message: "Usuario creado exitosamente", user: rows[0]});
 
     } catch (error) {
-        return res.status(500).json({ error: error.message });
+        console.error("Error al crear usuario:", error);
+        res.status(500).json({ error: "Error interno del servidor" });
     }
 }
 

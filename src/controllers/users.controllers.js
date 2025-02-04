@@ -48,22 +48,70 @@ export const createUser = async (req, res) => {
 
 export const deleteUser = async (req, res) => {
     const id = parseInt(req.params.id);
-    const { rowCount } = await pool.query("DELETE FROM users where id = $1", [id,]);
+    const { password } = req.body;
 
-    if (rowCount === 0) {
-        return res.status(404).json({ message: "User not found" });
+    try {
+        const { rows: userRows } = await pool.query("SELECT * FROM users WHERE id = $1", [id]);
+
+        if (userRows.length === 0) {
+            return res.status(404).json({ message: "Usuario no encontrado" });
+        }
+
+        const user = userRows[0];
+
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(400).json({ message: "Contraseña incorrecta" });
+        }
+
+        const { rowCount } = await pool.query("DELETE FROM users WHERE id = $1", [id]);
+
+        if (rowCount === 0) {
+            return res.status(404).json({ message: "Usuario no encontrado" });
+        }
+
+        return res.sendStatus(204);
+    } catch (error) {
+        console.error("Error al eliminar usuario:", error);
+        res.status(500).json({ error: "Error interno del servidor" });
     }
-
-    return res.sendStatus(204);
 }
 
 export const updateUser = async (req, res) => {
     const id = parseInt(req.params.id);
-    const { name, email } = req.body;
-    const { rows } = await pool.query(
-        "UPDATE users SET name = $1, email = $2 WHERE id = $3 RETURNING *",
-        [name, email, id]
-    );
+    const { username, email, password, currentPassword } = req.body;
 
-    return res.json(rows[0]);
+    try {
+        const { rows: userRows } = await pool.query("SELECT * FROM users WHERE id = $1", [id]);
+
+        if (userRows.length === 0) {
+            return res.status(404).json({ message: "Usuario no encontrado" });
+        }
+
+        const user = userRows[0];
+
+        const isMatch = await bcrypt.compare(currentPassword, user.password);
+        if (!isMatch) {
+            return res.status(400).json({ message: "Contraseña actual incorrecta" });
+        }
+
+        const updatedUsername = username || user.username;
+        const updatedEmail = email || user.email;
+        let updatedPassword = user.password;
+
+        if (password) {
+            const salt = await bcrypt.genSalt(10);
+            updatedPassword = await bcrypt.hash(password, salt);
+        }
+
+        const { rows } = await pool.query(
+            "UPDATE users SET username = $1, email = $2, password = $3 WHERE id = $4 RETURNING *",
+            [updatedUsername, updatedEmail, updatedPassword, id]
+        );
+
+        return res.json({ message: "Usuario actualizado exitosamente", user: rows[0] });
+    } catch (error) {
+        console.error("Error al actualizar usuario:", error);
+        res.status(500).json({ error: "Error interno del servidor" });
+    }
 }

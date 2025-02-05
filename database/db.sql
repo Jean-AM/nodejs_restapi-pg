@@ -85,3 +85,5 @@ CREATE INDEX idx_authors_name ON authors(name);
 CREATE INDEX idx_users_email ON users(email);
 
 ALTER TABLE users ADD COLUMN status INT DEFAULT 1;
+
+ALTER TABLE books ADD COLUMN status INT DEFAULT 1;

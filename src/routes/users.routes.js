@@ -5,15 +5,10 @@ import { createUser, deleteUser, getUserById, getUsers, updateUser, getInactiveU
 const router = Router();
 
 router.get('/users', getUsers);
-
 router.get('/users/inactive', getInactiveUsers);
-
-router.get('/users/:id', getUserById);
-
+router.get('/users/id/:id', getUserById);
 router.post('/users', createUser);
-
-router.delete('/users/:id', deleteUser);
-
-router.put('/users/:id', updateUser);
+router.delete('/users/id/:id', deleteUser);
+router.put('/users/id/:id', updateUser);
 
 export default router;

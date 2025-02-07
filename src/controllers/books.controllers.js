@@ -70,25 +70,25 @@ export const createBook = async (req, res) => {
 };
 
 export const deleteBook = async (req, res) => {
-    const { isbn } = req.params;
+    const { id } = req.params;
 
     try {
-        const { rows: bookRows } = await pool.query("SELECT * FROM books WHERE isbn = $1", [isbn]);
+        const { rows: bookRows } = await pool.query("SELECT * FROM books WHERE id = $1", [id]);
 
         if (bookRows.length === 0) {
             return res.status(404).json({ message: "Libro no encontrado" });
         }
 
         // Cambiar el estado del libro a 0 (inactivo)
-        const { rowCount } = await pool.query("UPDATE books SET status = 0 WHERE isbn = $1", [isbn]);
+        const { rowCount } = await pool.query("UPDATE books SET status = 0 WHERE id = $1", [id]);
 
         if (rowCount === 0) {
-            return res.status(400).json({ message: "No se pudo eliminar el libro" });
+            return res.status(400).json({ message: "No se pudo desactivar el libro" });
         }
 
         return res.status(200).json({ message: "Libro desactivado correctamente" });
     } catch (error) {
-        console.error("Error al eliminar libro:", error);
+        console.error("Error al desactivar libro:", error);
         res.status(500).json({ error: "Error interno del servidor" });
     }
 };

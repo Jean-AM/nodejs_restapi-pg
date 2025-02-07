@@ -6,8 +6,11 @@ const router = Router();
 router.get('/books', getBooks);
 router.get('/books/inactive', getInactiveBooks);
 router.get('/books/isbn/:isbn', getBookByIsbn);
+
 router.post('/books', createBook);
-router.delete('/books/isbn/:isbn', deleteBook);
+
+router.delete('/books/id/:id', deleteBook);
+
 router.put('/books/id/:id', updateBook);
 
 export default router;

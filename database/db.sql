@@ -1,4 +1,4 @@
-CREATE TABLE users (
+/* CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     name VARCHAR (255) NOT NULL,
     email VARCHAR (255) NOT NULL,
@@ -10,7 +10,7 @@ INSERT INTO users (name, email) VALUES
     ('Jane Doe', 'jane@gmail.com'),
     ('Diego P.', 'diego@gmail.com');
 
-SELECT * FROM users;
+SELECT * FROM users; */
 
 -- Tabla de libros
 CREATE TABLE books (
@@ -84,6 +84,11 @@ CREATE INDEX idx_books_title ON books(title);
 CREATE INDEX idx_authors_name ON authors(name);
 CREATE INDEX idx_users_email ON users(email);
 
+-- Se añadio una columna de estado
 ALTER TABLE users ADD COLUMN status INT DEFAULT 1;
 
+-- Se añadio una columna de estado
 ALTER TABLE books ADD COLUMN status INT DEFAULT 1;
+
+-- Se añadio una columna de estado
+ALTER TABLE authors ADD COLUMN status INT DEFAULT 1;

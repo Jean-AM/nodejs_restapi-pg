@@ -79,7 +79,6 @@ export const deleteBook = async (req, res) => {
             return res.status(404).json({ message: "Libro no encontrado" });
         }
 
-        // Cambiar el estado del libro a 0 (inactivo)
         const { rowCount } = await pool.query("UPDATE books SET status = 0 WHERE id = $1", [id]);
 
         if (rowCount === 0) {
@@ -94,7 +93,7 @@ export const deleteBook = async (req, res) => {
 };
 
 export const updateBook = async (req, res) => {
-    const id = parseInt(req.params.id);  // Obtener el id desde los parámetros de la URL
+    const id = parseInt(req.params.id);  
     const { title, description, publication_year, pages, cover_image_url, isbn } = req.body;
 
     try {
@@ -104,13 +103,12 @@ export const updateBook = async (req, res) => {
             return res.status(404).json({ message: "Libro no encontrado" });
         }
 
-        // Actualizar los campos proporcionados, manteniendo los antiguos si no se envían nuevos datos
         const updatedTitle = title || bookRows[0].title;
         const updatedDescription = description || bookRows[0].description;
         const updatedPublicationYear = publication_year || bookRows[0].publication_year;
         const updatedPages = pages || bookRows[0].pages;
         const updatedCoverImageUrl = cover_image_url || bookRows[0].cover_image_url;
-        const updatedIsbn = isbn || bookRows[0].isbn; // Permite cambiar el isbn si se pasa uno nuevo
+        const updatedIsbn = isbn || bookRows[0].isbn; 
 
         const { rows } = await pool.query(
             "UPDATE books SET title = $1, description = $2, publication_year = $3, pages = $4, cover_image_url = $5, isbn = $6, updated_at = CURRENT_TIMESTAMP WHERE id = $7 RETURNING *",

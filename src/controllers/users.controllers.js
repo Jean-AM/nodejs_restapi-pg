@@ -96,7 +96,6 @@ export const updateUser = async (req, res) => {
 
         const user = userRows[0];
 
-        // Verificar la contraseña antes de actualizar datos
         const isMatch = await bcrypt.compare(currentPassword, user.password);
         if (!isMatch) {
             return res.status(400).json({ message: "Contraseña actual incorrecta" });

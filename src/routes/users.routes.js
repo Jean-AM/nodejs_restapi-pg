@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { pool } from '../db.js'
-import { createUser, deleteUser, getUserById, getUsers, updateUser, getInactiveUsers } from '../controllers/users.controllers.js'
+import { createUser, deleteUser, getUserById, getUsers, updateUser, getInactiveUsers } from '../controllers/users.controller.js'
 
 const router = Router();
 

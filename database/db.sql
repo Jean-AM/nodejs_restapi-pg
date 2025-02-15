@@ -95,3 +95,6 @@ ALTER TABLE authors ADD COLUMN status INT DEFAULT 1;
 
 -- Se añadio una columna de estado
 ALTER TABLE categories ADD COLUMN status INT DEFAULT 1;
+
+-- Se añadio una columna de estado
+ALTER TABLE reviews ADD COLUMN status INT DEFAULT 1;
